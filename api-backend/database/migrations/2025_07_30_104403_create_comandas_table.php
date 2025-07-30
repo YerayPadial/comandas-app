@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('comandas', function (Blueprint $table) {
             $table->id();
+            $table->string('nombre_mesa');
+            $table->enum('estado', ['pendiente', 'en_cocina', 'lista', 'cobrada'])->default('pendiente');
             $table->timestamps();
         });
     }
