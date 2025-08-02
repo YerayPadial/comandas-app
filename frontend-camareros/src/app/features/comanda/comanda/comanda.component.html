@@ -1,1 +1,33 @@
-<p>comanda works!</p>
+<div class="min-h-screen bg-gray-50 p-4 flex flex-col items-center">
+  <h2 class="text-2xl font-bold mb-4 text-center w-full">Comanda - {{ nombreMesa }}</h2>
+
+  <div class="w-full max-w-xl bg-white rounded-xl shadow p-4 mb-6" *ngIf="productosComanda().length; else sinProductos">
+    <div *ngFor="let item of productosComanda()" class="flex items-center justify-between py-3 border-b last:border-b-0">
+      <div class="flex-1">
+        <div class="font-semibold text-lg">{{ item.producto.nombre }}</div>
+        <div class="text-sm text-gray-600">{{ item.producto.precio | currency:'EUR' }} x {{ item.cantidad }}</div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button (click)="restar(item)" class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center font-bold text-lg hover:bg-gray-300">−</button>
+        <span class="font-bold text-lg w-6 text-center">{{ item.cantidad }}</span>
+        <button (click)="sumar(item)" class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center font-bold text-lg hover:bg-gray-300">+</button>
+        <span class="ml-4 font-bold">{{ (item.producto.precio * item.cantidad) | currency:'EUR' }}</span>
+        <button (click)="eliminar(item)" class="ml-4 text-red-600 hover:underline">Eliminar</button>
+      </div>
+    </div>
+    <div class="flex justify-end mt-6 text-xl font-bold">
+      Total: <span class="ml-2 text-green-700">{{ total() | currency:'EUR' }}</span>
+    </div>
+  </div>
+
+  <ng-template #sinProductos>
+    <div class="text-center text-gray-500 py-16 font-semibold text-xl">
+      No hay productos en la comanda.
+    </div>
+  </ng-template>
+
+  <div class="flex flex-col md:flex-row gap-4 w-full max-w-xl mt-6">
+    <button (click)="volverMesa()" class="w-full py-3 rounded-lg bg-gray-300 hover:bg-gray-400 font-bold text-lg transition">Volver</button>
+    <button (click)="confirmarPedido()" [disabled]="!productosComanda().length" class="w-full py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white font-bold text-lg transition disabled:opacity-50">Confirmar pedido</button>
+  </div>
+</div>

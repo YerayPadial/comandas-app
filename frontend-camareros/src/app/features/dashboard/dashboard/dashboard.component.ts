@@ -20,11 +20,13 @@ export class DashboardComponent {
   }
 
   seleccionarMesa(nombre: string) {
+    localStorage.removeItem('comanda'); 
     this.router.navigate(['/mesa'], { queryParams: { nombre } });
   }
 
   crearMesaPersonalizada() {
     if (this.mesaPersonalizada.trim()) {
+      localStorage.removeItem('comanda'); 
       this.seleccionarMesa(this.mesaPersonalizada.trim());
       this.mesaPersonalizada = '';
     }

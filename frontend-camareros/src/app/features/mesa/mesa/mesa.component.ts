@@ -30,6 +30,23 @@ export class MesaComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.nombreMesa = params['nombre'] || '';
     });
+
+    // Cargar comanda existente de localStorage (si la hay)
+    const comandaAnterior = localStorage.getItem('comanda');
+    if (comandaAnterior) {
+      try {
+        const data = JSON.parse(comandaAnterior);
+        if (data && data.productos) {
+          for (const item of data.productos) {
+            this.comandaActual[item.producto.id] = {
+              producto: item.producto,
+              cantidad: item.cantidad
+            };
+          }
+        }
+      } catch (e) {}
+    }
+
     this.productoService.getProductos().subscribe(productos => {
       this.productos = productos;
       this.categorias = Array.from(new Set(productos.map(p => p.categoria)));
@@ -44,24 +61,30 @@ export class MesaComponent implements OnInit {
     } else {
       this.comandaActual[producto.id] = { producto, cantidad: 1 };
     }
+    this.saveComanda();
   }
 
   restarProducto(producto: Producto, event: MouseEvent) {
-    event.stopPropagation(); // Evita que se dispare agregarProducto
+    event.stopPropagation();
     const item = this.comandaActual[producto.id];
     if (item) {
       item.cantidad--;
       if (item.cantidad <= 0) {
         delete this.comandaActual[producto.id];
       }
+      this.saveComanda();
     }
   }
 
-  verComanda() {
+  saveComanda() {
     localStorage.setItem('comanda', JSON.stringify({
       nombreMesa: this.nombreMesa,
       productos: Object.values(this.comandaActual)
     }));
+  }
+
+  verComanda() {
+    this.saveComanda();
     this.router.navigate(['/comanda']);
   }
 
