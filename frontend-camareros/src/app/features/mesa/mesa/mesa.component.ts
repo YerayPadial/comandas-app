@@ -46,6 +46,17 @@ export class MesaComponent implements OnInit {
     }
   }
 
+  restarProducto(producto: Producto, event: MouseEvent) {
+    event.stopPropagation(); // Evita que se dispare agregarProducto
+    const item = this.comandaActual[producto.id];
+    if (item) {
+      item.cantidad--;
+      if (item.cantidad <= 0) {
+        delete this.comandaActual[producto.id];
+      }
+    }
+  }
+
   verComanda() {
     localStorage.setItem('comanda', JSON.stringify({
       nombreMesa: this.nombreMesa,
