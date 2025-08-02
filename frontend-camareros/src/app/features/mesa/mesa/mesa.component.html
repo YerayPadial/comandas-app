@@ -1,1 +1,38 @@
-<p>mesa works!</p>
+<div class="min-h-screen bg-gray-50 p-4">
+  <h2 class="text-xl font-bold mb-2">Mesa: {{ nombreMesa }}</h2>
+
+  <div class="flex space-x-2 mb-4 overflow-x-auto">
+    <button
+      *ngFor="let cat of categorias"
+      (click)="categoriaSeleccionada = cat"
+      class="px-4 py-2 rounded font-semibold"
+      [ngClass]="categoriaSeleccionada === cat ? 'bg-blue-600 text-white' : 'bg-white text-gray-800 border'"
+    >
+      {{ cat }}
+    </button>
+  </div>
+
+  <div *ngIf="loading()" class="text-center py-8 text-gray-500">Cargando productos...</div>
+
+  <div *ngIf="!loading()" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <button
+      *ngFor="let prod of productosFiltrados"
+        (click)="agregarProducto(prod)"
+      class="bg-white rounded shadow p-4 flex flex-col items-center hover:bg-blue-50 transition"
+    >
+      <span class="font-bold">{{ prod.nombre }}</span>
+      <span class="text-gray-600 text-sm mt-1">{{ prod.precio | currency:'EUR' }}</span>
+      <span *ngIf="comandaActual[prod.id]" class="mt-2 text-blue-600 font-bold">
+        x{{ comandaActual[prod.id].cantidad }}
+      </span>
+    </button>
+  </div>
+
+  <button
+    (click)="verComanda()"
+    [disabled]="!tieneComanda"
+    class="fixed bottom-4 right-4 bg-green-600 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-green-700 transition disabled:opacity-50"
+  >
+    Ver Comanda
+  </button>
+</div>
