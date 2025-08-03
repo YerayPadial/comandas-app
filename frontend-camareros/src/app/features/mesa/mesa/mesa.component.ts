@@ -44,7 +44,7 @@ export class MesaComponent implements OnInit {
             };
           }
         }
-      } catch (e) {}
+      } catch (e) { }
     }
 
     this.productoService.getProductos().subscribe(productos => {
@@ -86,6 +86,11 @@ export class MesaComponent implements OnInit {
   verComanda() {
     this.saveComanda();
     this.router.navigate(['/comanda']);
+  }
+
+  salir() {
+    localStorage.removeItem('comanda');
+    this.router.navigate(['/dashboard']);
   }
 
   get productosFiltrados(): Producto[] {
