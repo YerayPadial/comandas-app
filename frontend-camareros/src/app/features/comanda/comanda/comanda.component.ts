@@ -1,17 +1,19 @@
 import { Component, OnInit, signal, computed } from '@angular/core';
 import { CurrencyPipe, NgFor, NgIf } from '@angular/common';
 import { Router } from '@angular/router';
+import { ComandaService } from '../../../core/services/comanda.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-comanda',
   templateUrl: './comanda.component.html',
-  imports: [NgFor, NgIf, CurrencyPipe]
+  imports: [NgFor, NgIf, CurrencyPipe],
 })
 export class ComandaComponent implements OnInit {
   nombreMesa = '';
   productosComanda = signal<{ producto: any, cantidad: number }[]>([]);
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private comandaService: ComandaService) { }
 
   total = computed(() =>
     this.productosComanda().reduce((acc, item) => acc + item.producto.precio * item.cantidad, 0)
@@ -59,9 +61,36 @@ export class ComandaComponent implements OnInit {
   }
 
   confirmarPedido() {
-    // (Falta) Enviar api
-    alert('¡Pedido confirmado! (Funcionalidad en desarrollo)');
-    localStorage.removeItem('comanda');
-    this.router.navigate(['/dashboard']);
+    const productos = this.productosComanda().map(item => ({
+      producto_id: item.producto.id,
+      cantidad: item.cantidad
+    }));
+
+    const comanda = {
+      nombre_mesa: this.nombreMesa,
+      productos
+    };
+
+    this.comandaService.crearComanda(comanda).subscribe({
+      next: () => {
+        Swal.fire({
+          icon: 'success',
+          title: '¡Comanda enviada!',
+          showConfirmButton: false,
+          timer: 1000
+        }).then(() => {
+          localStorage.removeItem('comanda');
+          this.router.navigate(['/dashboard']);
+        });
+      },
+      error: () => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Hubo un error al enviar la comanda. Intenta de nuevo.',
+          confirmButtonText: 'Aceptar'
+        });
+      }
+    });
   }
 }
