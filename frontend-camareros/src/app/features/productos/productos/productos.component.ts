@@ -4,14 +4,21 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Producto } from '../../../core/models/producto.model';
 import { CurrencyPipe, NgFor, NgIf } from '@angular/common';
-import { ProductoDialogComponent } from './../producto-dialog.component';
+import { ProductoDialogComponent } from '../producto-dialogo/producto-dialog.component';
+import { MatButtonModule } from '@angular/material/button';
 import Swal from 'sweetalert2';
+
+//Añadir filtros por categoria y nombre
+//Añadir paginación y ordenación
+//No permitir bajar de 0 el precio
+// Hacer que si el nombre es muy largo se ponga un tamaño de letra más pequeño  hasta que quepa en una sola línea
+
 
 @Component({
   selector: 'app-productos',
   templateUrl: './productos.component.html',
   styleUrls: ['./productos.component.css'],
-  imports: [NgFor, NgIf, CurrencyPipe],
+  imports: [NgFor, NgIf, CurrencyPipe, MatButtonModule],
 })
 export class ProductosComponent implements OnInit {
   productos = signal<Producto[]>([]);

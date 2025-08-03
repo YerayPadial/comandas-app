@@ -1,4 +1,6 @@
-<h2 mat-dialog-title>{{ data.producto ? 'Editar producto' : 'Nuevo producto' }}</h2>
+<h2 mat-dialog-title>
+    {{ data.producto ? 'Editar producto' : 'Nuevo producto' }}
+</h2>
 <form [formGroup]="form" (ngSubmit)="guardar()" class="flex flex-col gap-4 p-4">
     <mat-form-field>
         <mat-label>Categoría</mat-label>
@@ -17,6 +19,6 @@
     </mat-form-field>
     <div class="flex gap-4 mt-4 justify-end">
         <button mat-stroked-button type="button" (click)="cancelar()">Cancelar</button>
-        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Guardar</button>
+        <button mat-flat-button type="submit" [disabled]="form.invalid">Guardar</button>
     </div>
 </form>
