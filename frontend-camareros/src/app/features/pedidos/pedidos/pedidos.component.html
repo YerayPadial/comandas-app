@@ -1,1 +1,58 @@
-<p>pedidos works!</p>
+<div class="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
+
+    <h2 class="text-2xl font-bold mb-6 text-center w-full">Panel de Pedidos</h2>
+
+    <!-- Filtros -->
+    <div class="flex gap-6 mb-8">
+        <label class="flex items-center gap-2 cursor-pointer">
+            <input type="radio" class="accent-blue-600" [checked]="filtroEstado() === 'pendiente'"
+                (change)="filtroEstado.set('pendiente')" />
+            <span class="font-semibold">Pendientes</span>
+        </label>
+        <label class="flex items-center gap-2 cursor-pointer">
+            <input type="radio" class="accent-green-600" [checked]="filtroEstado() === 'lista'"
+                (change)="filtroEstado.set('lista')" />
+            <span class="font-semibold">Listas</span>
+        </label>
+    </div>
+
+    <!-- Tarjetas de comandas -->
+    <div class="w-full max-w-2xl flex flex-col gap-6">
+        <ng-container *ngIf="comandasFiltradas().length; else sinPedidos">
+            <div *ngFor="let comanda of comandasFiltradas()" [ngClass]="{
+          'bg-blue-100 border-blue-400': comanda.estado === 'pendiente',
+          'bg-green-100 border-green-400': comanda.estado === 'lista'
+        }" class="rounded-xl border-2 p-5 shadow flex flex-col gap-2 transition">
+
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-lg font-bold">Comanda: {{ comanda.nombre_mesa }}</div>
+                    </div>
+                    <div class="text-2xl font-extrabold text-green-700 drop-shadow ml-4">
+                        {{ total(comanda) | currency:'EUR' }}
+                    </div>
+                </div>
+
+                <div class="mb-2 mt-2">
+                    <div *ngFor="let detalle of comanda.detalles" class="flex justify-between text-base">
+                        <span class="font-semibold">{{ detalle.cantidad }} x {{ detalle.producto.nombre }}</span>
+                        <span class="text-gray-600">{{ (detalle.producto.precio * detalle.cantidad) | currency:'EUR' }}</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 mt-3 justify-end">
+                    <button *ngIf="comanda.estado === 'pendiente'" (click)="cambiarEstado(comanda, 'lista')"
+                        class="px-5 py-2 rounded-lg bg-blue-600 text-white font-bold shadow hover:bg-blue-700 transition">Preparada</button>
+
+                    <button *ngIf="comanda.estado === 'lista'" (click)="cambiarEstado(comanda, 'cobrada')"
+                        class="px-5 py-2 rounded-lg bg-green-600 text-white font-bold shadow hover:bg-green-700 transition">Cobrar</button>
+                </div>
+            </div>
+        </ng-container>
+        <ng-template #sinPedidos>
+            <div class="py-24 text-center text-gray-500 text-xl font-semibold">
+                No hay comandas para este estado.
+            </div>
+        </ng-template>
+    </div>
+</div>
