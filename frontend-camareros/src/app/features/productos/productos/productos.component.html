@@ -1,1 +1,24 @@
-<p>productos works!</p>
+<div class="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
+    <h2 class="text-2xl font-bold mb-6">Gestión de Productos</h2>
+
+    <div class="flex gap-4 mb-6">
+        <button mat-raised-button color="primary" (click)="openNuevoProducto()">Añadir producto</button>
+    </div>
+
+    <div *ngIf="loading()" class="py-12 text-gray-500 text-xl">Cargando productos...</div>
+
+    <div class="w-full max-w-4xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div *ngFor="let prod of productos()"
+            class="bg-white rounded-xl shadow p-5 flex flex-col border-2 border-gray-200">
+            <div class="flex justify-between items-center mb-2">
+                <div class="font-bold text-lg truncate">{{ prod.nombre }}</div>
+                <div class="text-xs bg-gray-200 px-2 py-1 rounded text-gray-600">{{ prod.categoria }}</div>
+            </div>
+            <div class="mb-2 text-xl text-green-700 font-extrabold">{{ prod.precio | currency:'EUR' }}</div>
+            <div class="flex gap-2 mt-2 justify-end">
+                <button mat-stroked-button color="primary" (click)="openEditarProducto(prod)">Editar</button>
+                <button mat-stroked-button color="warn" (click)="eliminarProducto(prod)">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>

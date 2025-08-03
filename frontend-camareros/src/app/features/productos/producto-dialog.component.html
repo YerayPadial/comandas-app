@@ -1,0 +1,22 @@
+<h2 mat-dialog-title>{{ data.producto ? 'Editar producto' : 'Nuevo producto' }}</h2>
+<form [formGroup]="form" (ngSubmit)="guardar()" class="flex flex-col gap-4 p-4">
+    <mat-form-field>
+        <mat-label>Categoría</mat-label>
+        <mat-select formControlName="categoria" required>
+            <mat-option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</mat-option>
+        </mat-select>
+        <button mat-button type="button" (click)="openNuevaCategoria()" class="mt-2">+ Añadir nueva categoría</button>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="nombre" required>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Precio (€)</mat-label>
+        <input matInput formControlName="precio" type="number" step="0.01" required>
+    </mat-form-field>
+    <div class="flex gap-4 mt-4 justify-end">
+        <button mat-stroked-button type="button" (click)="cancelar()">Cancelar</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Guardar</button>
+    </div>
+</form>
