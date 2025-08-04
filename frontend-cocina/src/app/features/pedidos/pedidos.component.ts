@@ -1,4 +1,4 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, OnDestroy } from '@angular/core';
 import { ComandaService } from '../../core/services/comanda.service';
 import { CurrencyPipe, NgClass, NgFor, NgIf } from '@angular/common';
 import Swal from 'sweetalert2';
@@ -9,32 +9,36 @@ import Swal from 'sweetalert2';
   templateUrl: './pedidos.component.html',
   styleUrl: './pedidos.component.css'
 })
-export class PedidosComponent {
-  // estado seleccionado para filtrar
+export class PedidosComponent implements OnDestroy {
   filtroEstado = signal<'pendiente' | 'lista'>('pendiente');
-  // listado de comandas
   comandas = signal<any[]>([]);
-
-  // carga desde la API
-  ngOnInit() {
-    this.cargarComandas();
-  }
+  private pollingIntervalId: any;
 
   constructor(private comandaService: ComandaService) { }
 
+  ngOnInit() {
+    this.cargarComandas();
+    this.pollingIntervalId = setInterval(() => {
+      this.cargarComandas();
+    }, 2500); // Polling cada 2.5 segundos
+  }
+
+  ngOnDestroy() {
+    if (this.pollingIntervalId) {
+      clearInterval(this.pollingIntervalId);
+    }
+  }
+
   cargarComandas() {
     this.comandaService.getComandas().subscribe(res => {
-      // solo las que no están cobradas, orden descendente por fecha
       this.comandas.set(res.filter(c => c.estado !== 'cobrada'));
     });
   }
 
-  // filtrado reactivo
   comandasFiltradas = computed(() =>
     this.comandas().filter(c => c.estado === this.filtroEstado())
   );
 
-  // calcular total de la comanda
   total(comanda: any): number {
     if (!comanda.detalles) return 0;
     return comanda.detalles.reduce(
@@ -45,7 +49,6 @@ export class PedidosComponent {
   cambiarEstado(comanda: any, nuevoEstado: 'lista' | 'cobrada') {
     this.comandaService.actualizarComanda(comanda.id, { estado: nuevoEstado })
       .subscribe(() => {
-        // si es 'cobrada', la quitamos del listado, si no, actualizamos su estado
         if (nuevoEstado === 'cobrada') {
           this.comandas.set(this.comandas().filter(c => c.id !== comanda.id));
           Swal.fire({
@@ -66,5 +69,12 @@ export class PedidosComponent {
           });
         }
       });
+  }
+
+  get pendientesCount() {
+    return this.comandas().filter(c => c.estado === 'pendiente').length;
+  }
+  get listasCount() {
+    return this.comandas().filter(c => c.estado === 'lista').length;
   }
 }

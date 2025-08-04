@@ -1,56 +1,79 @@
-<div class="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
-    <h2 class="text-2xl font-bold mb-6 text-center w-full">Panel de Pedidos</h2>
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-200 p-4 md:p-8 flex flex-col items-center">
+    <h2
+        class="text-3xl md:text-4xl font-extrabold tracking-tight mb-8 text-slate-800 drop-shadow text-center w-full select-none">
+        Panel de comandas
+    </h2>
 
     <!-- Filtros -->
-    <div class="flex gap-6 mb-8">
-        <label class="flex items-center gap-2 cursor-pointer">
-            <input type="radio" class="accent-blue-600" [checked]="filtroEstado() === 'pendiente'"
+    <div class="flex gap-6 mb-10 justify-center w-full">
+        <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input type="radio" class="accent-blue-600 w-5 h-5" [checked]="filtroEstado() === 'pendiente'"
                 (change)="filtroEstado.set('pendiente')" />
-            <span class="font-semibold">Pendientes</span>
+            <span class="font-semibold text-lg text-slate-700">Pendientes</span>
+            <span
+                class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-blue-700 bg-blue-100 rounded-full"
+                *ngIf="pendientesCount">{{ pendientesCount }}</span>
         </label>
-        <label class="flex items-center gap-2 cursor-pointer">
-            <input type="radio" class="accent-green-600" [checked]="filtroEstado() === 'lista'"
+        <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input type="radio" class="accent-green-600 w-5 h-5" [checked]="filtroEstado() === 'lista'"
                 (change)="filtroEstado.set('lista')" />
-            <span class="font-semibold">Listas</span>
+            <span class="font-semibold text-lg text-slate-700">Listas</span>
+            <span
+                class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-green-700 bg-green-100 rounded-full"
+                *ngIf="listasCount">{{ listasCount }}</span>
         </label>
     </div>
 
     <!-- Tarjetas de comandas -->
-    <div class="w-full max-w-2xl flex flex-col gap-6">
+    <div class="w-full max-w-3xl grid grid-cols-1 md:grid-cols-2 gap-8">
         <ng-container *ngIf="comandasFiltradas().length; else sinPedidos">
             <div *ngFor="let comanda of comandasFiltradas()" [ngClass]="{
-          'bg-blue-100 border-blue-400': comanda.estado === 'pendiente',
-          'bg-green-100 border-green-400': comanda.estado === 'lista'
-        }" class="rounded-xl border-2 p-5 shadow flex flex-col gap-2 transition">
+  'bg-white border-l-8 border-blue-500 shadow-blue-100': comanda.estado === 'pendiente',
+  'bg-green-50 border-l-8 border-green-500 shadow-green-100': comanda.estado === 'lista'
+}" class="rounded-2xl shadow-lg p-6 flex flex-col h-full min-h-[340px] ring-1 ring-slate-200 relative group transition">
 
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between mb-2">
                     <div>
-                        <div class="text-lg font-bold">Comanda: {{ comanda.nombre_mesa }}</div>
+                        <div class="uppercase text-[15px] tracking-wider font-bold text-slate-500">
+                            Mesa <span class="text-slate-700 text-xl">{{ comanda.nombre_mesa }}</span>
+                        </div>
+                        <span class="text-xs bg-slate-200 px-2 py-0.5 rounded text-slate-600 font-semibold">
+                            {{ comanda.estado === 'pendiente' ? 'En preparación' : 'Pendiente de cobro' }}
+                        </span>
                     </div>
-                    <div class="text-2xl font-extrabold text-green-700 drop-shadow ml-4">
+                    <div class="text-3xl font-black text-green-700 drop-shadow ml-4 select-none">
                         {{ total(comanda) | currency:'EUR' }}
                     </div>
                 </div>
 
-                <div class="mb-2 mt-2">
-                    <div *ngFor="let detalle of comanda.detalles" class="flex justify-between text-base">
-                        <span class="font-semibold">{{ detalle.cantidad }} x {{ detalle.producto.nombre }}</span>
-                        <span class="text-gray-600">{{ (detalle.producto.precio * detalle.cantidad) | currency:'EUR'
-                            }}</span>
+                <div class="divide-y divide-slate-200 rounded-lg bg-slate-50 overflow-hidden shadow-inner">
+                    <div *ngFor="let detalle of comanda.detalles"
+                        class="flex justify-between items-center px-3 py-2 text-lg">
+                        <span class="font-semibold text-slate-800 flex-1 truncate">
+                            <span class="inline-block text-base text-slate-400 font-bold w-8">{{ detalle.cantidad
+                                }}x</span>
+                            {{ detalle.producto.nombre }}
+                        </span>
+                        <span class="text-base text-slate-500 font-medium min-w-[80px] text-right">
+                            {{ (detalle.producto.precio * detalle.cantidad) | currency:'EUR' }}
+                        </span>
                     </div>
                 </div>
 
-                <div class="flex gap-3 mt-3 justify-end">
+                <div class="flex gap-4 mt-auto self-end pt-6">
                     <button *ngIf="comanda.estado === 'pendiente'" (click)="cambiarEstado(comanda, 'lista')"
-                        class="px-5 py-2 rounded-lg bg-blue-600 text-white font-bold shadow hover:bg-blue-700 transition">Preparada</button>
-
+                        class="text-lg px-8 py-3 rounded-xl bg-blue-600 text-white font-black shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-transform duration-150">
+                        Marcar como Lista
+                    </button>
                     <button *ngIf="comanda.estado === 'lista'" (click)="cambiarEstado(comanda, 'cobrada')"
-                        class="px-5 py-2 rounded-lg bg-green-600 text-white font-bold shadow hover:bg-green-700 transition">Cobrar</button>
+                        class="text-lg px-8 py-3 rounded-xl bg-green-600 text-white font-black shadow-lg shadow-green-200 hover:bg-green-700 active:scale-95 transition-transform duration-150">
+                        Cobrar
+                    </button>
                 </div>
             </div>
         </ng-container>
         <ng-template #sinPedidos>
-            <div class="py-24 text-center text-gray-500 text-xl font-semibold">
+            <div class="py-24 col-span-full text-center text-slate-400 text-2xl font-bold tracking-wide select-none">
                 No hay comandas para este estado.
             </div>
         </ng-template>
