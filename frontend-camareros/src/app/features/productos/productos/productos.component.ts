@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, effect } from '@angular/core';
 import { ProductoService } from '../../../core/services/producto.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -6,24 +6,30 @@ import { Producto } from '../../../core/models/producto.model';
 import { CurrencyPipe, NgFor, NgIf } from '@angular/common';
 import { ProductoDialogComponent } from '../producto-dialogo/producto-dialog.component';
 import { MatButtonModule } from '@angular/material/button';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
 import Swal from 'sweetalert2';
-
-//Añadir filtros por categoria y nombre
-//Añadir paginación y ordenación
-//No permitir bajar de 0 el precio
-// Hacer que si el nombre es muy largo se ponga un tamaño de letra más pequeño  hasta que quepa en una sola línea
-
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-productos',
   templateUrl: './productos.component.html',
   styleUrls: ['./productos.component.css'],
-  imports: [NgFor, NgIf, CurrencyPipe, MatButtonModule],
+  imports: [
+    NgFor, NgIf, CurrencyPipe, MatButtonModule, MatPaginatorModule, MatSelectModule, MatIconModule, FormsModule
+  ],
 })
 export class ProductosComponent implements OnInit {
   productos = signal<Producto[]>([]);
   categorias = signal<string[]>([]);
   loading = signal(false);
+
+  // Filtro, paginación y ordenación
+  categoriaSeleccionada = signal<string>('Todos');
+  paginaActual = signal<number>(0);
+  productosPorPagina = 6;
+  orden = signal<{ campo: 'nombre' | 'precio', direccion: 'asc' | 'desc' }>({ campo: 'nombre', direccion: 'asc' });
 
   constructor(
     private productoService: ProductoService,
@@ -42,6 +48,51 @@ export class ProductosComponent implements OnInit {
       this.categorias.set([...new Set(prods.map(p => p.categoria))]);
       this.loading.set(false);
     });
+  }
+
+  // Productos filtrados, ordenados y paginados
+  productosFiltrados = computed(() => {
+    let arr = this.productos();
+    if (this.categoriaSeleccionada() !== 'Todos') {
+      arr = arr.filter(p => p.categoria === this.categoriaSeleccionada());
+    }
+    // Ordenar
+    arr = arr.slice().sort((a, b) => {
+      let res = 0;
+      if (this.orden().campo === 'nombre') {
+        res = a.nombre.localeCompare(b.nombre);
+      } else {
+        res = a.precio - b.precio;
+      }
+      return this.orden().direccion === 'asc' ? res : -res;
+    });
+    return arr;
+  });
+
+  productosPaginados = computed(() => {
+    const start = this.paginaActual() * this.productosPorPagina;
+    return this.productosFiltrados().slice(start, start + this.productosPorPagina);
+  });
+
+  cambiarCategoria(cat: string) {
+    this.categoriaSeleccionada.set(cat);
+    this.paginaActual.set(0); // Reiniciar paginación al filtrar
+  }
+
+  cambiarOrden(campo: 'nombre' | 'precio') {
+    if (this.orden().campo === campo) {
+      // Cambiar dirección
+      this.orden.set({
+        campo,
+        direccion: this.orden().direccion === 'asc' ? 'desc' : 'asc'
+      });
+    } else {
+      this.orden.set({ campo, direccion: 'asc' });
+    }
+  }
+
+  onPageChange(event: any) {
+    this.paginaActual.set(event.pageIndex);
   }
 
   openNuevoProducto() {

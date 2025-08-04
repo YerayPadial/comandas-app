@@ -1,14 +1,40 @@
 <div class="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
     <h2 class="text-2xl font-bold mb-6">Gestión de Productos</h2>
 
-    <div class="flex gap-4 mb-6">
+    <div class="flex flex-col sm:flex-row gap-4 mb-6 w-full max-w-4xl justify-between items-center">
         <button mat-raised-button color="primary" (click)="openNuevoProducto()">Añadir producto</button>
+        <div class="h-0 sm:h-auto sm:w-5"></div>
+        <!-- Filtro de categoría -->
+        <div class="flex items-center gap-2 w-full max-w-xs mb-6">
+            <label for="filtro-categoria" class="font-semibold text-base text-gray-700">Categoría:</label>
+            <select id="filtro-categoria"
+                class="block w-full rounded-lg border border-blue-400 focus:ring-blue-500 focus:border-blue-500 px-3 py-2 bg-white text-gray-900 text-base font-medium truncate"
+                [ngModel]="categoriaSeleccionada()" (ngModelChange)="cambiarCategoria($event)">
+                <option value="Todos">Todos</option>
+                <option *ngFor="let cat of categorias()" [value]="cat">{{ cat }}</option>
+            </select>
+        </div>
+        <!-- Ordenar -->
+        <div class="flex gap-2 items-center">
+            <span class="font-semibold">Ordenar por:</span>
+            <button mat-icon-button (click)="cambiarOrden('nombre')"
+                [color]="orden().campo==='nombre' ? 'primary': undefined">
+                <mat-icon>sort_by_alpha</mat-icon>
+                <span class="sr-only">Nombre</span>
+            </button>
+            <button mat-icon-button (click)="cambiarOrden('precio')"
+                [color]="orden().campo==='precio' ? 'primary': undefined">
+                <mat-icon>euro</mat-icon>
+                <span class="sr-only">Precio</span>
+            </button>
+            <mat-icon>{{ orden().direccion === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+        </div>
     </div>
 
     <div *ngIf="loading()" class="py-12 text-gray-500 text-xl">Cargando productos...</div>
 
     <div class="w-full max-w-4xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        <div *ngFor="let prod of productos()"
+        <div *ngFor="let prod of productosPaginados()"
             class="bg-white rounded-xl shadow p-5 flex flex-col border-2 border-gray-200">
             <div class="flex justify-between items-center mb-2">
                 <div class="font-bold text-lg truncate">{{ prod.nombre }}</div>
@@ -21,4 +47,10 @@
             </div>
         </div>
     </div>
+
+    <!-- Paginador -->
+    <mat-paginator [length]="productosFiltrados().length" [pageSize]="productosPorPagina" [pageSizeOptions]="[6]"
+        [pageIndex]="paginaActual()" (page)="onPageChange($event)" class="mt-8 w-full max-w-4xl"
+        aria-label="Selector de página de productos">
+    </mat-paginator>
 </div>
