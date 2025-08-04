@@ -11,13 +11,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import Swal from 'sweetalert2';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-productos',
   templateUrl: './productos.component.html',
   styleUrls: ['./productos.component.css'],
   imports: [
-    NgFor, NgIf, CurrencyPipe, MatButtonModule, MatPaginatorModule, MatSelectModule, MatIconModule, FormsModule
+    NgFor, NgIf, CurrencyPipe, MatButtonModule, MatPaginatorModule, MatSelectModule, MatIconModule, FormsModule, RouterLink
   ],
 })
 export class ProductosComponent implements OnInit {

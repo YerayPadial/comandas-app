@@ -1,5 +1,8 @@
 <div class="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
-
+    <button mat-stroked-button color="primary" class="mb-6 self-start" [routerLink]="['/dashboard']">
+        <mat-icon>arrow_back</mat-icon>
+        Volver
+    </button>
     <h2 class="text-2xl font-bold mb-6 text-center w-full">Panel de Pedidos</h2>
 
     <!-- Filtros -->
@@ -36,7 +39,8 @@
                 <div class="mb-2 mt-2">
                     <div *ngFor="let detalle of comanda.detalles" class="flex justify-between text-base">
                         <span class="font-semibold">{{ detalle.cantidad }} x {{ detalle.producto.nombre }}</span>
-                        <span class="text-gray-600">{{ (detalle.producto.precio * detalle.cantidad) | currency:'EUR' }}</span>
+                        <span class="text-gray-600">{{ (detalle.producto.precio * detalle.cantidad) | currency:'EUR'
+                            }}</span>
                     </div>
                 </div>
 

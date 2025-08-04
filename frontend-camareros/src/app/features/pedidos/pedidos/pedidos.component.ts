@@ -2,11 +2,14 @@ import { Component, OnInit, signal, computed } from '@angular/core';
 import { ComandaService } from '../../../core/services/comanda.service';
 import { CurrencyPipe, NgClass, NgFor, NgIf } from '@angular/common';
 import Swal from 'sweetalert2';
+import { RouterLink } from '@angular/router';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-pedidos',
   templateUrl: './pedidos.component.html',
-  imports: [NgFor, NgIf, NgClass, CurrencyPipe],
+  imports: [NgFor, NgIf, NgClass, CurrencyPipe, RouterLink, MatIcon, MatButton],
 })
 export class PedidosComponent implements OnInit {
   // estado seleccionado para filtrar

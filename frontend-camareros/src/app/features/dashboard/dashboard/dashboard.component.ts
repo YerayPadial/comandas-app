@@ -1,12 +1,15 @@
 import { NgFor, NgForOf } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { Router, RouterLink } from '@angular/router';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  imports: [FormsModule, NgFor]
+  imports: [FormsModule, NgFor, RouterLink, MatButtonModule, MatIconModule, MatMenuModule]
 })
 export class DashboardComponent {
   mesas: string[] = [];
@@ -20,13 +23,13 @@ export class DashboardComponent {
   }
 
   seleccionarMesa(nombre: string) {
-    localStorage.removeItem('comanda'); 
+    localStorage.removeItem('comanda');
     this.router.navigate(['/mesa'], { queryParams: { nombre } });
   }
 
   crearMesaPersonalizada() {
     if (this.mesaPersonalizada.trim()) {
-      localStorage.removeItem('comanda'); 
+      localStorage.removeItem('comanda');
       this.seleccionarMesa(this.mesaPersonalizada.trim());
       this.mesaPersonalizada = '';
     }
