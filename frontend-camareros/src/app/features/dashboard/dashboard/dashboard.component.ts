@@ -1,4 +1,4 @@
-import { NgFor, NgForOf } from '@angular/common';
+import { NgClass, NgFor, NgForOf } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,7 +9,7 @@ import { MatMenuModule } from '@angular/material/menu';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  imports: [FormsModule, NgFor, RouterLink, MatButtonModule, MatIconModule, MatMenuModule]
+  imports: [FormsModule, NgFor, RouterLink, MatButtonModule, MatIconModule, MatMenuModule, NgClass]
 })
 export class DashboardComponent {
   mesas: string[] = [];

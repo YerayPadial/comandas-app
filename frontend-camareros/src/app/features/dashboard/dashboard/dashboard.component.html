@@ -1,32 +1,48 @@
-<div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-slate-200 flex flex-col items-center justify-center p-4">
   <!-- Menú desplegable a la derecha -->
   <div class="w-full max-w-md flex justify-end mt-8">
-    <button mat-icon-button [matMenuTriggerFor]="menu">
-      <mat-icon>apps</mat-icon>
+    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Menú">
+      <mat-icon fontIcon="apps" class="text-3xl text-blue-700"></mat-icon>
     </button>
     <mat-menu #menu="matMenu">
       <button mat-menu-item [routerLink]="'/pedidos'">
-        <mat-icon>list_alt</mat-icon>
+        <mat-icon fontIcon="list_alt"></mat-icon>
         <span>Comandas</span>
       </button>
       <button mat-menu-item [routerLink]="'/productos'">
-        <mat-icon>restaurant_menu</mat-icon>
+        <mat-icon fontIcon="restaurant_menu"></mat-icon>
         <span>Carta</span>
       </button>
     </mat-menu>
   </div>
-  <h1 class="text-2xl font-bold mb-6 text-center">Selecciona una mesa</h1>
-  <div class="grid grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-md mb-8">
+  <h2
+    class="text-4xl md:text-5xl font-black tracking-tight mb-8 text-blue-900 drop-shadow text-center w-full select-none">
+    <span class="inline-flex items-center gap-2">Selecciona una mesa</span>
+  </h2>
+  <!-- Grid de mesas -->
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-md mb-10">
     <button *ngFor="let mesa of mesas" (click)="seleccionarMesa(mesa)"
-      class="bg-white rounded-lg shadow p-8 flex items-center justify-center text-lg font-semibold hover:bg-blue-100 transition">
-      {{ mesa }}
+      class="group bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center justify-center text-2xl font-extrabold border-2 border-transparent hover:border-blue-500 hover:bg-blue-50 transition cursor-pointer h-28 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      [attr.aria-label]="'Mesa ' + mesa">
+      <span class="tracking-wider text-blue-900 group-hover:text-blue-700 transition select-none">{{ mesa }}</span>
     </button>
   </div>
+  <!-- Crear mesa personalizada -->
   <div class="w-full max-w-md flex flex-col items-center space-y-2">
-    <input [(ngModel)]="mesaPersonalizada" (keydown.enter)="crearMesaPersonalizada()" type="text" maxlength="25"
-      class="w-full p-3 rounded border shadow text-lg" placeholder="Crear mesa personalizada" />
-    <button (click)="crearMesaPersonalizada()"
-      class="bg-blue-600 text-white px-6 py-2 rounded font-bold hover:bg-blue-700 transition w-full">
+    <div class="relative w-full">
+      <input [(ngModel)]="mesaPersonalizada" (keydown.enter)="crearMesaPersonalizada()" type="text" maxlength="25"
+        class="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white text-lg font-medium text-slate-700 shadow-sm transition outline-none"
+        placeholder="Crear mesa personalizada" aria-label="Escribe el nombre de la mesa" />
+      <mat-icon fontIcon="add"
+        class="absolute left-3 top-1/2 -translate-y-1/2 text-blue-300 text-2xl pointer-events-none"></mat-icon>
+    </div>
+    <button
+      (click)="crearMesaPersonalizada()"
+      [disabled]="!mesaPersonalizada.trim()"
+      [ngClass]="{'opacity-50 cursor-not-allowed': !mesaPersonalizada.trim()}"
+      class="bg-blue-600 text-white px-7 py-3 rounded-xl font-black text-lg shadow-lg hover:bg-blue-700 transition w-full active:scale-95"
+    >
+      <mat-icon fontIcon="add" class="mr-2 text-white text-xl align-middle"></mat-icon>
       Añadir Mesa Personalizada
     </button>
   </div>
