@@ -18,7 +18,16 @@
         <button (click)="sumar(item)"
           class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center font-bold text-lg hover:bg-gray-300">+</button>
         <span class="ml-4 font-bold">{{ (item.producto.precio * item.cantidad) | currency:'EUR' }}</span>
-        <button (click)="eliminar(item)" class="ml-4 text-red-600 hover:underline">Eliminar</button>
+        <!-- Botón eliminar con icono de basura -->
+        <button (click)="eliminar(item)" class="ml-2 text-red-600 hover:bg-red-100 rounded-full p-2 transition"
+          title="Eliminar">
+          <!-- Heroicons Trash SVG -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M6 7h12M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2m3 0v12a2 2 0 01-2 2H8a2 2 0 01-2-2V7h14z" />
+          </svg>
+        </button>
       </div>
     </div>
     <div class="flex justify-end mt-6 text-xl font-bold">
@@ -33,10 +42,15 @@
   </ng-template>
 
   <div class="flex flex-col md:flex-row gap-4 w-full max-w-xl mt-6">
-    <button (click)="volverMesa()"
-      class="w-full py-3 rounded-lg bg-gray-500 hover:bg-gray-400 font-bold text-white text-lg transition">Volver</button>
     <button (click)="confirmarPedido()" [disabled]="!productosComanda().length"
       class="w-full py-3 rounded-lg bg-blue-900 hover:bg-blue-800 text-white font-bold text-lg transition disabled:opacity-50">Confirmar
       pedido</button>
+    <button (click)="volverMesa()"
+      class="w-full py-3 rounded-lg bg-gray-500 hover:bg-gray-400 font-bold text-white text-lg transition">
+      <svg class="inline-block w-7 h-7 mr-2 -mt-1 align-middle" fill="none" stroke="currentColor" stroke-width="3"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
+      </svg> Volver</button>
   </div>
 </div>
